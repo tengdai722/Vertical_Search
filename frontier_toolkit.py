@@ -5,6 +5,7 @@ import os
 from nltk.stem import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
 from stop_words import get_stop_words
+import re
 
 
 def lda_func(X=lda.datasets.load_reuters(),
@@ -12,7 +13,6 @@ def lda_func(X=lda.datasets.load_reuters(),
              titles=lda.datasets.load_reuters_titles(),
              n_topics=10,
              n_top_words=8):
-
     # define and fit the model
     model = lda.LDA(n_topics=n_topics, n_iter=1500, random_state=1)
     model.fit(X)
@@ -20,7 +20,7 @@ def lda_func(X=lda.datasets.load_reuters(),
     # topics
     topic_word = model.topic_word_  # model.components_ also works
     for i, topic_dist in enumerate(topic_word):
-        topic_words = np.array(vocab)[np.argsort(topic_dist)][:-(n_top_words+1):-1]
+        topic_words = np.array(vocab)[np.argsort(topic_dist)][:-(n_top_words + 1):-1]
         print('Topic {}: {}'.format(i, ' '.join(topic_words)))
 
     # document topic coverage
@@ -51,7 +51,7 @@ def process():
         for root, dirs, files in os.walk('corpus'):
             for fname in files:
                 # link topic to document indices
-                topic_str = root.split('/')[-1]
+                topic_str = re.split(r'[/]|[\\\]]', root)[-1]
                 if topic_str not in topic_dict:
                     topic_dict[topic_str] = [doc_idx]
                 else:
@@ -155,22 +155,83 @@ def feedback(clicked_doc_index, user, topic_dict, document_topic_str_dict):
 
 
 class User:
-    def __init__(self, corpus_size, user_attrib, username, password):
-        self.preference_vec = np.zeros(corpus_size)
+    def __init__(self, preference, user_attrib, username, password):
+        self.preference_vec = np.copy(preference)
         self.user_attrib_vec = np.copy(user_attrib)
         self.username = username
         self.__password = password
+
+    # simple login check
+    def login(self, password):
+        return password == self.__password
+
+
+class Authenticator:
+    def __init__(self, corpus_size, topic_dict, document_topic_str_dict):
+        self.username_to_user_dict = {}
+        self.current_username = ""
+        self.occupation_topic_dict = {"Teacher": "Education", "Model": "Fashion", "Accountant": "Finance",
+                                      "Chef": "Food", "Doctor": "Health", "Officer": "Politics",
+                                      "Athlete": "Sport", "Software Engineer": "Technology", "Traveller": "Travel"}
+        self.corpus_size = corpus_size
+        self.topic_dict = topic_dict
+        self.document_topic_str_dict = document_topic_str_dict
+
+    def register(self, username, password, occupation):
+        if username in self.username_to_user_dict:
+            return "Error: Username is already taken, please try another username."
+        elif occupation not in self.occupation_topic_dict:
+            return "Error: Please select a valid occupation."
+        else:
+            preference_vec = np.zeros(self.corpus_size)
+            user_attrib_vec = np.zeros(self.corpus_size)
+            topic_str = self.occupation_topic_dict[occupation]
+            target_indices = topic_dict[topic_str]
+            user_attrib_vec[target_indices] = 0.02
+
+            new_user = User(preference_vec, user_attrib_vec, username, password)
+            self.username_to_user_dict[username] = new_user
+            return "Successfully create user: " + username
+
+    def login(self, username, password):
+        if username not in self.username_to_user_dict:
+            return "Error: Username does not exist."
+        else:
+            temp_user = self.username_to_user_dict[username]
+            # if password is wrong
+            if not temp_user.login(password):
+                return "Error: Incorrect password."
+            else:
+                self.current_username = username
+                return "Successfully logged in."
+
+    def get_current_login_user(self):
+        if self.current_username != "":
+            return self.username_to_user_dict[self.current_username]
+        else:
+            raise Exception("Not logged in")
 
 
 if __name__ == '__main__':
     # preprocess corpus
     data, vocab, titles, topic_dict, document_topic_str_dict = process()
 
-    # initialize test user object
-    user_attribute = np.zeros(data.shape[0])
-    user = User(data.shape[0], user_attribute, "test", "test")
-    for i in range(5):
-        user_attribute[i] = 0.02
+    # initialize Authenticator for the system
+    auth = Authenticator(data.shape[0], topic_dict, document_topic_str_dict)
+
+    # register test user
+    username, password, occupation = "test_user", "test_password", "Athlete"
+    message = auth.register(username, password, occupation)
+    print(message)
+
+    # login test user
+    message = auth.login(username, password)
+    print(message)
+
+    try:
+        user = auth.get_current_login_user()
+    except Exception as inst:
+        print(inst)
 
     # test query
     query_result = query("he precipitating factor for the Financial Crisis of", user, data, vocab, titles)
