@@ -196,6 +196,8 @@ class Authenticator:
     def login(self, username, password):
         if username not in self.username_to_user_dict:
             return "Error: Username does not exist."
+        elif self.current_username != "":
+            return "Error: Someone else is currently logged in."
         else:
             temp_user = self.username_to_user_dict[username]
             # if password is wrong
@@ -204,6 +206,9 @@ class Authenticator:
             else:
                 self.current_username = username
                 return "Successfully logged in."
+
+    def logout_current_user(self):
+        self.current_username = ""
 
     def get_current_login_user(self):
         if self.current_username != "":
