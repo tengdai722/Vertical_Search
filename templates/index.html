@@ -1,0 +1,60 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    } 
+    div.relative {
+      position: relative;
+      left: 500px;
+    }
+    input[type=text], input[type=password] {
+    width: 30%;
+    padding: 20px;
+    margin: 5px 0 22px 0;
+    display: inline-block; 
+    border: none;
+    background: #f1f1f1;
+}
+  </style>
+
+
+
+<body>
+  <h1>News Feed</h1>
+  <form action="/users/login/">
+    <input type="submit" value="log in" style="height: 100px; width: 150px; left: 400; top: 400;"/>
+    </form>  
+  <form action="/users/signup/">
+    <input type="submit" value="sign up" style="height: 100px; width: 150px; left: 400; top: 400;"/>
+    </form>
+
+
+    <form method= "POST" action="/search/">
+    What do you want to search today: <br/>
+    <input type="text" name="search"> <br/>
+    <input type="submit" value="Submit">
+
+    <!--
+    <h2> Our Communities </h2> 
+
+      <div class='relative'>
+      <form method= "POST" action="/search/">
+      What do you want to search today: <input type="text" name="search"> <br/>
+       <input type="submit" value="Submit">
+  </form>
+  </div>
+
+    <div>
+      {% for n in data %}
+        <ul>
+         <li><a href = "/community/{{n}}/">{{n}}</a></li> 
+        </ul> 
+      {% endfor %}
+    </div>
+    -->
+
+</body>
+
+
+</html>
