@@ -186,7 +186,7 @@ class Authenticator:
             preference_vec = np.zeros(self.corpus_size)
             user_attrib_vec = np.zeros(self.corpus_size)
             topic_str = self.occupation_topic_dict[occupation]
-            target_indices = topic_dict[topic_str]
+            target_indices = self.topic_dict[topic_str]
             user_attrib_vec[target_indices] = 0.02
 
             new_user = User(preference_vec, user_attrib_vec, username, password)

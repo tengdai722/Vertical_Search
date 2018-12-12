@@ -88,25 +88,7 @@ def signup():
 def add_account():
     username = str(request.form["username"])
     password = str(request.form["password"])
-    occupation = ""
-    if "Teacher" == str(request.form["Teacher"]):
-        occupation = "Teacher"
-    elif "Model" == str(request.form["Model"]):
-        occupation = "Model"
-    elif "Accountant" == str(request.form["Accountant"]):
-        occupation = "Accountant"
-    elif "Chef" == str(request.form["Chef"]):
-        occupation = "Chef"
-    elif "Doctor" == str(request.form["Doctor"]):
-        occupation = "Doctor"
-    elif "Officer" == str(request.form["Officer"]):
-        occupation = "Officer"
-    elif "Athlete" == str(request.form["Athlete"]):
-        occupation = "Athlete"
-    elif "Software Engineer" == str(request.form["Software Engineer"]):
-        occupation = "Software Engineer"
-    elif "Traveller" == str(request.form["Traveller"]):
-        occupation = "Traveller"
+    occupation = str(request.form["occupation"])
 
     auth.register(username, password, occupation)
 
@@ -120,7 +102,7 @@ if __name__ == "__main__":
     @click.command()
     @click.option('--debug', is_flag=True)
     @click.option('--threaded', is_flag=True)
-    @click.argument('HOST', default='0.0.0.0')
+    @click.argument('HOST', default='127.0.0.1')
     @click.argument('PORT', default=8111, type=int)
     def run(debug, threaded, host, port):
         """
