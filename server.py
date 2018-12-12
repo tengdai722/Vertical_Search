@@ -30,7 +30,8 @@ app.secret_key = os.urandom(24)
 
 @app.route('/', methods = ["GET"])
 def home():
-
+  
+  return render_template("index.html")
 
 
 @app.route('/search/', methods = ["POST"])
@@ -111,7 +112,7 @@ def add_account():
   	occupation = "Officer"
   elif "Athlete" == str(request.form["Athlete"]):
   	occupation = "Athlete"
-   elif "Software Engineer" == str(request.form["Software Engineer"]):
+  elif "Software Engineer" == str(request.form["Software Engineer"]):
   	occupation = "Software Engineer"
   elif "Traveller" == str(request.form["Traveller"]):
   	occupation = "Traveller" 
