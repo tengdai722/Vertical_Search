@@ -34,6 +34,7 @@ def process():
         data = []
         vocab = {}
         titles = []
+        document_bodies = []
 
         # e.g. key: "Technology", value: [0, 1, 2, 3, 4]
         topic_dict = {}
@@ -72,6 +73,8 @@ def process():
                     doc_string = ''
                     for line in lines[1:]:
                         doc_string += line.rstrip() + ' '
+
+                    document_bodies.append(doc_string)
 
                     # clean doc_string
                     doc_string = doc_string.lower()
@@ -120,10 +123,10 @@ def process():
         titles = list(loaded['titles'])
 
     # lda_func(data, vocab, titles, n_topics=9, n_top_words=12)
-    return data, vocab, titles, topic_dict, document_topic_str_dict
+    return data, vocab, titles, topic_dict, document_topic_str_dict, document_bodies
 
 
-def query(query_str, user_attribute, data, vocab, titles):
+def query(query_str, user, data, vocab, titles, document_bodies):
     query_vector = np.zeros(data.shape[1], dtype='int64')
     ps = PorterStemmer()
     en_stop = get_stop_words('en')
@@ -131,27 +134,35 @@ def query(query_str, user_attribute, data, vocab, titles):
     tokens = tokenizer.tokenize(query_str)
     # remove stop words from tokens
     stopped_tokens = [i for i in tokens if not i in en_stop]
+    match = False
     for word in stopped_tokens:
         stemmed_word = ps.stem(word)
-        query_vector[vocab[stemmed_word]] += 1
+        if stemmed_word in vocab:
+            match = True
+            query_vector[vocab[stemmed_word]] += 1
 
-    # score = document_vec @ query_vec + w1 * user_attrib_vec + w2 * user_preference_vec
-    score = data @ query_vector + 0.5 * user.user_attrib_vec + 0.5 * user.preference_vec
-    sorted_index = np.argsort(score)[::-1][:5]
-    titles = np.array(titles)
-    result = list(titles[sorted_index])
-    return result
+    if match:
+        # score = document_vec @ query_vec + w1 * user_attrib_vec + w2 * user_preference_vec
+        score = data @ query_vector + 0.5 * user.user_attrib_vec + 0.5 * user.preference_vec
+        sorted_index = np.argsort(score)[::-1][:5]
+        titles = np.array(titles)
+        document_bodies = np.array(document_bodies)
+        return list(titles[sorted_index]), list(document_bodies[sorted_index]), list(sorted_index)
+    else:
+        return [], []
 
 
 # when user clicks a specific document, update his/her preference vector
 def feedback(clicked_doc_index, user, topic_dict, document_topic_str_dict):
+    print("update feedback for user", user.username, "for document", clicked_doc_index)
+
     # the topic string of the clicked document, e.g. "Technology"
     topic_str = document_topic_str_dict[clicked_doc_index]
 
     # the indices of all documents in the same topic type with the clicked document
     target_indices = topic_dict[topic_str]
 
-    user.preference_vec[target_indices] += 0.01
+    user.preference_vec[target_indices] += 0.001
 
 
 class User:
@@ -189,7 +200,7 @@ class Authenticator:
             user_attrib_vec = np.zeros(self.corpus_size)
             topic_str = self.occupation_topic_dict[occupation]
             target_indices = self.topic_dict[topic_str]
-            user_attrib_vec[target_indices] = 0.02
+            user_attrib_vec[target_indices] = 0.01
 
             new_user = User(preference_vec, user_attrib_vec, username, password)
             self.username_to_user_dict[username] = new_user
@@ -221,7 +232,7 @@ class Authenticator:
 
 if __name__ == '__main__':
     # preprocess corpus
-    data, vocab, titles, topic_dict, document_topic_str_dict = process()
+    data, vocab, titles, topic_dict, document_topic_str_dict, document_bodies = process()
 
     # initialize Authenticator for the system
     auth = Authenticator(data.shape[0], topic_dict, document_topic_str_dict)
@@ -241,9 +252,10 @@ if __name__ == '__main__':
         print(inst)
 
     # test query
-    query_result = query("he precipitating factor for the Financial Crisis of", user, data, vocab, titles)
-    for i in range(len(query_result)):
-        print(i + 1, query_result[i])
+    result_titles, result_bodies, result_idx = query("he precipitating factor for the Financial Crisis of", user, data, vocab,
+                                         titles, document_bodies)
+    for i in range(len(result_titles)):
+        print(i + 1, result_titles[i])
 
     # test feedback
     print("Before feedback update: \n", user.preference_vec)

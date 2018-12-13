@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Faq</title>
+    <title>Display</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="keywords" content="Photo-Hub Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
@@ -62,7 +62,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <div class="register">
     <div class="container">
-        <h2>{{title}}</h2></div>
+        <h2>{{title}}</h2>
+        {% for result in results %}
+            <h3>
+                {% if result.idx %}
+                <a href="/show_article?click={{result.idx}}">{{result.doc_title}}</a>
+                {% else %}
+                <a href="/index.html">Return to front page</a><br><br>
+                {{result.doc_title}}
+                {% endif %}
+            </h3>
+            {% if result.idx %}
+            <p style="overflow: hidden; text-overflow: ellipsis;max-height: 5.4em">{{result.doc_body}}</p>
+            {% else %}
+            <p>{{result.doc_body}}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>
 <div class="grid_3">
     <div class="container">

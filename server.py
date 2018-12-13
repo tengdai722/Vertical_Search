@@ -28,19 +28,57 @@ def home():
         return render_template("index.html", username=session["username"])
 
 
-@app.route('/search/', methods=["POST"])
+@app.route('/search/', methods=["GET", "POST"])
 def search():
-    srch = str(request.form['search'])
-    srch_result = []  # array instead of dictionary with a key since one search as key
-    # getting questions match
-    print(srch)
+    srch = str(request.form["search_text"])
+    print("query_string =", srch)
 
-    srch_result = query(srch, user, data, vocab, titles)
+    if "username" not in session:
+        print("search for guest user")
+        res_titles, res_bodies, res_idx = query(srch, guest_user, data, vocab, titles, document_bodies)
+        # if search not matched
+        if len(res_titles) == 0:
+            return render_template("display.html", title="Cannot match any document with query '%s'" % srch)
+        else:
+            return render_template("display.html", title="Search Results",
+                                   results=search_result_to_html_tag(res_titles, res_bodies, res_idx))
+    else:
+        print("search for user %s" % session["username"])
+        user = auth.get_current_login_user()
+        res_titles, res_bodies, res_idx = query(srch, user, data, vocab, titles, document_bodies)
 
-    print("search successful!")
+        # if search not matched
+        if len(res_titles) == 0:
+            return render_template("display.html", title="Cannot match any document with query '%s'" % srch,
+                                   username=session["username"])
+        else:
+            return render_template("display.html", title="Search Results", username=session["username"],
+                                   results=search_result_to_html_tag(res_titles, res_bodies, res_idx))
 
-    context = dict(search=srch, search_result=srch_result)
-    return render_template("search.html", **context)
+
+def search_result_to_html_tag(res_titles, res_bodies, res_idx):
+    result = []
+    for i in range(len(res_titles)):
+        result.append({"doc_title": res_titles[i], "doc_body": res_bodies[i], "idx": res_idx[i]})
+    return result
+
+
+@app.route('/show_article/', methods=["GET"])
+def show_article():
+    try:
+        click_index = int(request.args["click"])
+        print("Clicked document idx:", click_index)
+    except ValueError:
+        display_content("Error: unknown document clicked.")
+        return
+    if "username" not in session:
+        return render_template("display.html", title="View article",
+                               results=[{"doc_title": titles[click_index], "doc_body": document_bodies[click_index]}])
+    else:
+        # update feedback for current logged in user.
+        feedback(click_index, auth.get_current_login_user(), topic_dict, document_topic_str_dict)
+        return render_template("display.html", title="View article", username=session["username"],
+                               results=[{"doc_title": titles[click_index], "doc_body": document_bodies[click_index]}])
 
 
 @app.route('/users/login/action/', methods=["POST"])
@@ -101,8 +139,11 @@ def add_account():
 if __name__ == "__main__":
     import click
 
-    data, vocab, titles, topic_dict, document_topic_str_dict = process()
+    data, vocab, titles, topic_dict, document_topic_str_dict, document_bodies = process()
     auth = Authenticator(data.shape[0], topic_dict, document_topic_str_dict)
+    guest_vector = np.zeros(data.shape[0])
+    guest_user = User(guest_vector, guest_vector, "guest", "guest")
+
 
     @click.command()
     @click.option('--debug', is_flag=True)
