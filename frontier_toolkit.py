@@ -149,7 +149,7 @@ def query(query_str, user, data, vocab, titles, document_bodies):
         document_bodies = np.array(document_bodies)
         return list(titles[sorted_index]), list(document_bodies[sorted_index]), list(sorted_index)
     else:
-        return [], []
+        return [], [], []
 
 
 # when user clicks a specific document, update his/her preference vector
