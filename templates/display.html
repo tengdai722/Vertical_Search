@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Faq</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="Photo-Hub Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"/>
+    <script type="application/x-javascript">
+         addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+    </script>
+    <link href="{{url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <link href="{{url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css'/>
+    <!-- Custom Theme files -->
+    <!--webfont-->
+    <script type="text/javascript" src="{{url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+    <script src="{{url_for('static', filename='js/menu_jquery.js') }}"></script>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <div class="logo">
+            <h1><a href="/index.html">VSearch</a></h1>
+        </div>
+        <div class="top_right">
+            <ul>
+                {% if username %}
+                <li>Hello {{username}}!</li>
+                |
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/register">Register</a></li>
+                |
+                <li class="login">
+                    <div id="loginContainer"><a href="#" id="loginButton"><span>Login</span></a>
+                        <div id="loginBox">
+                            <form id="loginForm" method="post" action="/users/login/action/">
+                                <fieldset id="body">
+                                    <fieldset>
+                                        <label for="email">Username</label>
+                                        <input type="text" name="username" id="email">
+                                    </fieldset>
+                                    <fieldset>
+                                        <label for="password">Password</label>
+                                        <input type="password" name="password" id="password">
+                                    </fieldset>
+                                    <input type="submit" id="login" value="Sign in">
+                                    <label for="checkbox"><input type="checkbox" id="checkbox"> <i>Remember
+                                        me</i></label>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<div class="register">
+    <div class="container">
+        <h2>{{title}}</h2></div>
+</div>
+<div class="grid_3">
+    <div class="container">
+        <ul id="footer-links">
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Royalty Free License</a></li>
+            <li><a href="#">Extended License</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Support</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Categories</a></li>
+        </ul>
+        <p>Copyright &copy; 2015.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>		

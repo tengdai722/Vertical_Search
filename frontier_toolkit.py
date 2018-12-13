@@ -182,6 +182,8 @@ class Authenticator:
             return "Error: Username is already taken, please try another username."
         elif occupation not in self.occupation_topic_dict:
             return "Error: Please select a valid occupation."
+        elif not username or not password:
+            return "Error: username and password cannot be empty."
         else:
             preference_vec = np.zeros(self.corpus_size)
             user_attrib_vec = np.zeros(self.corpus_size)
@@ -191,7 +193,7 @@ class Authenticator:
 
             new_user = User(preference_vec, user_attrib_vec, username, password)
             self.username_to_user_dict[username] = new_user
-            return "Successfully create user: " + username
+            return "Successfully create user"
 
     def login(self, username, password):
         if username not in self.username_to_user_dict:
