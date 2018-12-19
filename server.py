@@ -5,8 +5,9 @@ from flask import Flask, request, render_template, session, g, redirect, \
 
 """
 Webserver for VSearch
-Course Project for CS510
-
+This file includes all server side logic for front end HTTP requests.
+It utilizes the API specified in frontier_toolkit.py to process user requests, 
+queries, and registration.
 """
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')

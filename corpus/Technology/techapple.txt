@@ -1,0 +1,4 @@
+App Store Preview
+The Apple Store app provides a more personal way to shop for the latest Apple products and accessories. Get recommendations based on the Apple products you already own. Find out which accessories are compatible with your devices. Easily upgrade to a new iPhone from your current one. Keep track of your orders wherever you go. And sign up for hands-on sessions in store. You can even use Apple Pay to check out from your iPhone when you visit a participating Apple Store. 
+Note that the Apple Store app and certain features are available only in select countries.
+To confirm compatibility and recommend products, the app will access both the services and the name, model, and part number of devices linked to your Apple ID. To turn off this feature, go to Account > Settings > My Devices and Services.

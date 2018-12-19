@@ -8,6 +8,12 @@ from stop_words import get_stop_words
 import re
 
 
+"""
+This file supports lda for topic analysis, preprocess corpus data, user data backend,
+And the core algorithms used in our search system.
+"""
+
+
 def lda_func(X=lda.datasets.load_reuters(),
              vocab=lda.datasets.load_reuters_vocab(),
              titles=lda.datasets.load_reuters_titles(),
