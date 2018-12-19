@@ -1,4 +1,7 @@
-# Vertical Search
+# Vertical Search Engine - VSearch
+
+##### *A CS510 project created by Yan Feng (yanfeng3@illinois.edu), Dai Teng(daiteng2@illinois.edu), Houyi Lin (houyil2@illinois.edu)*
+
 ### Installation instruction
 Please download the entire project, and use `pip install` to install required packages.
 Required packages are: `flask, lda, numpy, nltk, and stop_words`.
