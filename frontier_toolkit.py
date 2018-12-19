@@ -162,7 +162,7 @@ def feedback(clicked_doc_index, user, topic_dict, document_topic_str_dict):
     # the indices of all documents in the same topic type with the clicked document
     target_indices = topic_dict[topic_str]
 
-    user.preference_vec[target_indices] += 0.001
+    user.preference_vec[target_indices] += 0.002
 
 
 class User:
@@ -200,7 +200,7 @@ class Authenticator:
             user_attrib_vec = np.zeros(self.corpus_size)
             topic_str = self.occupation_topic_dict[occupation]
             target_indices = self.topic_dict[topic_str]
-            user_attrib_vec[target_indices] = 0.01
+            user_attrib_vec[target_indices] = 0.1
 
             new_user = User(preference_vec, user_attrib_vec, username, password)
             self.username_to_user_dict[username] = new_user

@@ -1,14 +1,10 @@
 from frontier_toolkit import *
 import os
-from sqlalchemy import *
-from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, session, g, redirect, \
     Response  # session is a module that allows us to hold login information
-from collections import defaultdict
-import random  # module for random integer generator
 
 """
-Webserver for News Feed
+Webserver for VSearch
 Course Project for CS510
 
 """
